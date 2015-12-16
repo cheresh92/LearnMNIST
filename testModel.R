@@ -13,11 +13,12 @@ testModel <- function(classifier, Data){
   x <- cbind(1, x)
   
   # coupute value for 0-class
-  res <- Sigmoid(matrix(classifier[, 1], dim(classifier)[1], 1), x)
   
+  res <- 1 / (1.0 + exp(-x %*% classifier[, 1]))
+
   # coupute value for i-class
   for (i in 2:9) {
-    res <- cbind(res, Sigmoid(classifier[, i], x))
+    res <- cbind(res, 1 / (1.0 + exp(-x %*% classifier[, i])))
   }
   
   finalLabel <- matrix(0, dim(x)[1], 1)

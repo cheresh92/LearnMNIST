@@ -21,6 +21,7 @@ print(sum(predictedLabels == trainLabels)/length(trainLabels))
 
 #load ROCR library
 library(ROCR)
+
 for (i in 1:10) {
   #count all metrics for eash classifier
   classMetric(classifier[, i], trainData, trainLabels, i-1)

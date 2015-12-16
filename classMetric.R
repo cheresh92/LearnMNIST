@@ -18,23 +18,22 @@ classMetric <- function(Thetas, data, labels, label){
   x <- cbind(1, x)  
   
   
-  predictedValues <- Sigmoid(Thetas, x)
+  predictedValues <- 1 / (1.0 + exp(-x %*% Thetas ))
   predictedLabels <- as.numeric(predictedValues > 0.5) 
   
   # predictedLabels and labels binary matrix. If we multyply them
   # it will be like binary and. 
   # Then we just get number of "1" in result of multiplication
-  tp <- as.numeric( table(predictedLabels * labels)["1"])
-  tn <- as.numeric( table( as.numeric(!predictedLabels) * as.numeric(!labels) )["1"])
-  fn <- as.numeric( table( as.numeric(predictedLabels) * as.numeric(!labels) )["1"])
-  fp <- as.numeric( table( as.numeric(!predictedLabels) * as.numeric(labels) )["1"])
+  tp <- as.numeric( table(predictedLabels * y)["1"])
+  tn <- as.numeric( table( as.numeric(!predictedLabels) * as.numeric(!y) )["1"])
+  fn <- as.numeric( table( as.numeric(predictedLabels) * as.numeric(!y) )["1"])
+  fp <- as.numeric( table( as.numeric(!predictedLabels) * as.numeric(y) )["1"])
   
   # normalize metrics
-  tp <- tp / length(labels)
-  tn <- tn / length(labels)
-  fn <- fn / length(labels)
-  fp <- fp / length(labels)
-  
+  tp <- tp / length(y)
+  tn <- tn / length(y)
+  fn <- fn / length(y)
+  fp <- fp / length(y)
   
   # compute data
   recall <- tp / (tp + fn)

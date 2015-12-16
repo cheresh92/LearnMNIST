@@ -1,7 +1,7 @@
 learnModel <- function(data, labels){
   # Learn model. Model may be lear from file or by computition. 
   # If you need compute data, just delete files from 
-  # SavedClasifier directory 
+  # SavedClassifier directory 
   #
   # Args:
   # data: Training data
@@ -11,7 +11,9 @@ learnModel <- function(data, labels){
   # Matrix of classifaer cofficient. n coloumn if coefficint Theta for n-1 label
   
   learnModel = 0
-  fileName = "SavedClasifier\\data 0.csv"
+  fileName = "SavedClassifiers\\data 0.csv"
+  
+  x <- cbind(1, data/256.0)
   
   if (file.exists(fileName)){
     # load data from file
@@ -24,7 +26,18 @@ learnModel <- function(data, labels){
     y = LabelsToBinary(labels, 0)
     
     print(sprintf("Classifier 0 was load from file"))
-    print(sprintf("J for 0-class = %g", CostFunction(learnModel, cbind(1, data/256.0), y)))
+    
+    h <- 1 / (1.0 + exp(-x %*% learnModel ))
+    m <- length(y)
+    J <- sum( -y*log(h) - (1 - y)*log(1 - h)) / m
+    if (is.nan(J) || is.infinite(J))
+    {
+      #get smallest positive value
+      smallest = .Machine$double.xmin
+      #recalculate 
+      J <- sum( -y*log(h + smallest) - (1 - y)*log(1 - h + smallest) ) / m
+    }
+    print(sprintf("J for 0-class = %g", J))
   }
   else {
     # compute coefficient
@@ -37,7 +50,7 @@ learnModel <- function(data, labels){
 
     for (i in 1:9) {
     
-    fileName = paste("SavedClasifier\\data", toString(i))
+    fileName = paste("SavedClassifiers\\data", toString(i))
     fileName = paste(fileName, ".csv")
     
     if (file.exists(fileName)){
@@ -61,7 +74,19 @@ learnModel <- function(data, labels){
     y = LabelsToBinary(labels, i)
     
     # compute cost function for i class
-    print(sprintf("J for %g-class = %g",i,  CostFunction(tmp, cbind(1, data/256.0), y)))
+    h <- 1 / (1.0 + exp(-x %*% tmp))
+    m <- length(y)
+    J <- sum( -y*log(h) - (1 - y)*log(1 - h)) / m
+    
+    if (is.nan(J) || is.infinite(J))
+    {
+      #get smallest positive value
+      smallest = .Machine$double.xmin
+      #recalculate 
+      J <- sum( -y*log(h + smallest) - (1 - y)*log(1 - h + smallest) ) / m
+    }
+    
+    print(sprintf("J for %g-class = %g",i,  J))
 
     # bind matrix with vector
     learnModel <- cbind(learnModel, tmp)
